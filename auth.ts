@@ -11,8 +11,8 @@ import * as dotenvExpand from "dotenv-expand";
 
 dotenvExpand.expand(dotenv.config());
 
-const { PDP_URL = 'http://localhost:3002', PDP_API_KEY } = process.env;
-const authorizerUrl = `${PDP_URL}/access/v1/evaluations`
+const { AUTHZEN_PDP_URL = 'http://localhost:3002', AUTHZEN_PDP_API_KEY } = process.env;
+const authorizerUrl = `${AUTHZEN_PDP_URL}/access/v1/evaluations`
 
 export const checkJwt = jwt({
   // Dynamically provide a signing key based on the kid in the header and the signing keys provided by the JWKS endpoint
@@ -50,8 +50,8 @@ export const authzMiddleware = (store) => {
       const headers: Record<string, string> = {
         'content-type': 'application/json',
       };
-      if (PDP_API_KEY) {
-        headers.authorization = PDP_API_KEY;
+      if (AUTHZEN_PDP_API_KEY) {
+        headers.authorization = AUTHZEN_PDP_API_KEY;
       }
       const data = {
         subject: {

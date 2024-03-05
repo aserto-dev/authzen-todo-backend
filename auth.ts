@@ -62,7 +62,7 @@ export const authzMiddleware = (store) => {
         },
         resource: await resourceMapper(req, store),
       };
-      const response = await axios.post(authorizerUrl, { headers, data });
+      const response = await axios.post(authorizerUrl, data, { headers });
       if (response?.data?.decision) {
         next();
       } else {

@@ -11,7 +11,7 @@ import * as dotenvExpand from "dotenv-expand";
 
 dotenvExpand.expand(dotenv.config());
 
-const { AUTHZEN_PDP_URL = 'http://localhost:3002', AUTHZEN_PDP_API_KEY } = process.env;
+const { AUTHZEN_PDP_URL, AUTHZEN_PDP_API_KEY } = process.env;
 const authorizerUrl = `${AUTHZEN_PDP_URL}/access/v1/evaluations`
 
 export const checkJwt = jwt({

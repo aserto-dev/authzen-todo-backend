@@ -1,0 +1,32 @@
+{
+  "decisions": [
+    {
+      "request": {
+        "subject": {
+          "identity": "CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs"
+        },
+        "action": {
+          "name": "can_read_user"
+        },
+        "resource": {
+          "id": "beth@the-smiths.com"
+        }
+      },
+      "expected": true
+    },
+    {
+      "request": {
+        "subject": {
+          "identity": "CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs"
+        },
+        "action": {
+          "name": "can_delete_todo"
+        },
+        "resource": {
+          "ownerID": "beth@the-smiths.com"
+        }
+      },
+      "expected": true
+    }
+  ]
+}

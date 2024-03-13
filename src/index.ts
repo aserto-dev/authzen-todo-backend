@@ -12,7 +12,7 @@ const app: express.Application = express();
 app.use(express.json());
 app.use(cors());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 8080;
 
 Store.open().then((store) => {
   const server = new Server(store);

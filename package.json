@@ -1,7 +1,7 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
+  "name": "authzen-todo-backend",
+  "version": "0.1.0",
+  "description": "AuthZEN todo backend interop sample",
   "main": "src/index.ts",
   "scripts": {
     "build": "rm -rf ./build && tsc",
@@ -14,8 +14,8 @@
     "test": "./scripts/test.sh"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Omri Gazitt <ogazitt@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.6.7",
     "cors": "^2.8.5",

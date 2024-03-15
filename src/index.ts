@@ -18,6 +18,7 @@ Store.open().then((store) => {
   const server = new Server(store);
   const checkAuthz = authzMiddleware(store);
 
+  app.get("/pdps", server.listPdps.bind(server));
   app.get("/users/:userID", checkJwt, checkAuthz('can_read_user'), server.getUser.bind(server));
   app.get("/todos", checkJwt, checkAuthz('can_read_todos'), server.list.bind(server));
   app.post("/todos", checkJwt, checkAuthz('can_create_todo'), server.create.bind(server));

@@ -8,11 +8,13 @@ import {
 import jwksRsa = require("jwks-rsa");
 import * as dotenv from "dotenv";
 import * as dotenvExpand from "dotenv-expand";
+import log from "./log";
+const pdps = require("./pdps.json");
 
 dotenvExpand.expand(dotenv.config());
 
-const { AUTHZEN_PDP_URL, AUTHZEN_PDP_API_KEY } = process.env;
-const authorizerUrl = `${AUTHZEN_PDP_URL}/access/v1/evaluations`
+// default PDP
+const { AUTHZEN_PDP_URL, AUTHZEN_PDP_API_KEYS = {} } = process.env;
 
 export const checkJwt = jwt({
   // Dynamically provide a signing key based on the kid in the header and the signing keys provided by the JWKS endpoint
@@ -30,13 +32,23 @@ export const checkJwt = jwt({
 });
 
 // Resource mapper
-const resourceMapper = async (req: express.Request, store) => {
-  if (!req.params?.id) {
-    return {};
+const resourceMapper = async (req: express.Request, permission: string, store) => {
+  switch (permission) {
+    case 'can_read_user':
+      return { type: 'user', userID: req.params.userID };
+    case 'can_read_todos':
+      return { type: 'todo' };
+    case 'can_create_todo':
+      return { type: 'todo' };
+    case 'can_update_todo':
+      const todo = await store.get(req.params.id);
+      return { ownerID: todo.OwnerID, type: 'todo' };
+    case 'can_delete_todo':
+      const todoToDelete = await store.get(req.params.id);
+      return { ownerID: todoToDelete.OwnerID, type: 'todo' };
+    default:
+      return {};
   }
-
-  const todo = await store.get(req.params.id);
-  return { ownerID: todo.OwnerID };
 };
 
 // Authorizer middleware
@@ -47,11 +59,16 @@ export const authzMiddleware = (store) => {
       res: express.Response,
       next: express.NextFunction
     ) => {
+      const pdpHeader = req.headers["x_authzen_pdp"] as string;
+      const pdpBaseName = (pdpHeader && pdps[pdpHeader]) ?? AUTHZEN_PDP_URL;
+      const authorizerUrl = `${pdpBaseName}/access/v1/evaluations`
+      log(`Authorizer: ${authorizerUrl}`);
+      const pdpAuthHeader = (pdpHeader && AUTHZEN_PDP_API_KEYS[pdpHeader])
       const headers: Record<string, string> = {
         'content-type': 'application/json',
       };
-      if (AUTHZEN_PDP_API_KEY) {
-        headers.authorization = AUTHZEN_PDP_API_KEY;
+      if (pdpAuthHeader) {
+        headers.authorization = pdpAuthHeader;
       }
       const data = {
         subject: {
@@ -60,9 +77,12 @@ export const authzMiddleware = (store) => {
         action: {
           name: permission,
         },
-        resource: await resourceMapper(req, store),
+        resource: await resourceMapper(req, permission, store),
+        context: {}
       };
+      log(data);
       const response = await axios.post(authorizerUrl, data, { headers });
+      log(response?.data)
       if (response?.data?.decision) {
         next();
       } else {

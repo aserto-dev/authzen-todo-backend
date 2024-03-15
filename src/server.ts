@@ -4,6 +4,7 @@ import { Response } from "express";
 import { Todo } from "./interfaces";
 import { Store } from "./store";
 import { Directory } from "./directory";
+const pdps = require("./pdps.json");
 
 export class Server {
   store: Store;
@@ -12,6 +13,10 @@ export class Server {
   constructor(store: Store) {
     this.store = store;
     this.directory = new Directory();
+  }
+
+  async listPdps(_: Request, res: Response) {
+    res.json(Object.keys(pdps));
   }
 
   async getUser(req: JWTRequest, res: Response) {

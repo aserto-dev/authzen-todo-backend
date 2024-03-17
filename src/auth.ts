@@ -9,7 +9,7 @@ import jwksRsa = require("jwks-rsa");
 import * as dotenv from "dotenv";
 import * as dotenvExpand from "dotenv-expand";
 import log from "./log";
-const pdps = require("./pdps.json");
+import * as pdps from "./pdps.json";
 
 dotenvExpand.expand(dotenv.config());
 
